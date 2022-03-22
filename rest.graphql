@@ -1,0 +1,102 @@
+directive @anonymize(type: String) on FIELD_DEFINITION
+directive @rest(
+  url: String,
+  headers: [NameValueInput],
+  method: String,
+  setters: [SettersInput],
+  params: [NameValueInput],
+  resultRoot: String
+) on FIELD_DEFINITION
+
+input NameValueInput {
+  name: String
+  value: String
+}
+
+input SettersInput {
+  field: String
+  path: String
+}
+
+type Query {
+  getTopPlayers(apiKey: String!, season_id: Int): Root_1
+    @rest(
+      url: "https://app.sportdataapi.com/api/v1/soccer/topscorers"
+      method: "GET"
+      headers: [{ name: "apikey", value: "$apiKey"}]
+      params: [{ name: "season_id", value: "$season_id"}]
+      setters: []
+      resultRoot: "data"
+    )
+  getTeam(apiKey: String!, team_id: Int): Root_2
+    @rest(
+      url: "https://app.sportdataapi.com/api/v1/soccer/teams/$team_id"
+      headers: [{ name: "apikey", value: "$apiKey"}]
+    )
+}
+
+type Goals_1 {
+  away: Int
+  home: Int
+  overall: Int
+}
+
+type Player_1 {
+  player_id: Int
+  player_name: String
+}
+
+type Team_1 {
+  team_id: Int
+  team_name: String
+}
+
+type OneData_1 {
+  goals: Goals_1
+  league_id: Int
+  matches_played: Int
+  minutes_played: Int
+  penalties: Int
+  player: Player_1
+  pos: Int
+  season_id: Int
+  substituted_in: Int
+  team: Team_1
+}
+
+type Query_1 {
+  apikey: String
+  season_id: String
+}
+
+type Root_1 {
+  data: [OneData_1]
+  query: Query_1
+}
+
+# ====== getTeam ======
+type Country_2 {
+  continent: String
+  country_code: String
+  country_id: Int
+  name: String
+}
+
+type Data_2 {
+  country: Country_2
+  logo: String
+  name: String
+  short_code: String
+  team_id: Int
+}
+
+type Query_2 {
+  apikey: String
+}
+
+type Root_2 {
+  data: Data_2
+  query: Query_2
+}
+
+

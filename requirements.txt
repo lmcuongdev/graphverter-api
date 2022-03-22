@@ -1,0 +1,8 @@
+ariadne==0.14.1
+marshmallow==3.14.1
+requests==2.27.1
+Flask==1.1.1
+Flask-Cors==3.0.10
+Flask-SQLAlchemy==2.5.1
+SQLAlchemy==1.4.20
+itsdangerous==2.0.1
