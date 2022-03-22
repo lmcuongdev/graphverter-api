@@ -35,6 +35,14 @@ type Query {
     )
 }
 
+type Mutation {
+  createUser(_payload: PayloadInput_3): Root_3
+    @rest(
+      url: "https://jsonplaceholder.typicode.com/users"
+      method: "POST"
+    )
+}
+
 type Goals_1 {
   away: Int
   home: Int
@@ -99,4 +107,32 @@ type Root_2 {
   query: Query_2
 }
 
+# ====== createUser ======
+type Company_3 {
+  bs: String
+  catchPhrase: String
+  name: String
+}
 
+type Root_3 {
+  company: Company_3
+  id: Int
+  name: String
+  phone: String
+  username: String
+  website: String
+}
+
+input CompanyInput_3 {
+  bs: String
+  catchPhrase: String
+  name: String
+}
+
+input PayloadInput_3 {
+  company: CompanyInput_3
+  name: String
+  phone: String
+  username: String
+  website: String
+}
