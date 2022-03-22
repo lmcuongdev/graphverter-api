@@ -20,8 +20,6 @@ class RestDirectiveInputSchema(BaseSchema):
     )
     headers = fields.Nested(NameValuePairSchema, required=False, many=True)
     params = fields.Nested(NameValuePairSchema, required=False, many=True)
-    # TODO Med: Validate payload to be JSON string
-    payload = fields.String(required=False)
 
     @pre_load
     def lowercase_method(self, data: dict, **_):
@@ -32,8 +30,6 @@ class RestDirectiveInputSchema(BaseSchema):
     @post_load
     def reformat_data(self, data, **_):
         # Convert payload, headers, params to dict
-        if 'payload' in data:
-            data['payload'] = json.loads(data['payload'])
         for field in ['headers', 'params']:
             if field in data:
                 # Aware that it might have duplicated keys

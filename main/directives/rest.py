@@ -20,10 +20,8 @@ from main.schemas.directive import RestDirectiveInputSchema
 
 def _get_resolved_config(config: dict, variables: dict):
     url = config['url']
-    request_method = config['method']
     headers = config.get('headers')
     params = config.get('params')
-    payload = config.get('payload')
 
     # TODO: Refactor this so that it replaces vars in other configs as well
     # Replace $variable with its value in url, headers, params
@@ -54,6 +52,10 @@ class RestDirective(SchemaDirectiveVisitor):
         original_resolver = field.resolve or default_field_resolver
 
         def resolve_rest(obj, info, **kwargs):
+            if kwargs.get('_payload'):
+                # To use @rest with payload, user must provide _payload as argument
+                config['payload'] = kwargs.pop('_payload')
+
             resolved_config = _get_resolved_config(config, variables=kwargs)
             response = requests.request(
                 resolved_config['method'],
