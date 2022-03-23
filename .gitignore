@@ -107,3 +107,5 @@ venv.bak/
 .idea/
 
 coverage_report/
+
+node_modules/
