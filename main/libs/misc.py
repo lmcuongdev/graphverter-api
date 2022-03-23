@@ -1,6 +1,6 @@
 import json
 from contextlib import suppress
-from typing import Callable, TypeVar, Optional
+from typing import Callable, Optional, TypeVar
 
 T = TypeVar('T')
 

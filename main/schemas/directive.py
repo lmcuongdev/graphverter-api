@@ -1,6 +1,6 @@
 import json
 
-from marshmallow import fields, validate, pre_load, post_load
+from marshmallow import fields, post_load, pre_load, validate
 
 from main.schemas.base import BaseSchema
 
@@ -33,8 +33,6 @@ class RestDirectiveInputSchema(BaseSchema):
         for field in ['headers', 'params']:
             if field in data:
                 # Aware that it might have duplicated keys
-                data[field] = {
-                    pair['name']: pair['value'] for pair in data[field]
-                }
+                data[field] = {pair['name']: pair['value'] for pair in data[field]}
 
         return data

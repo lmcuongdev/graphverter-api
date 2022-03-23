@@ -1,7 +1,7 @@
 from sqlalchemy import Index
 
 from main import db
-from main.models.base import TimestampMixin, MetaDataMixin
+from main.models.base import MetaDataMixin, TimestampMixin
 
 
 class Session(db.Model, TimestampMixin, MetaDataMixin):

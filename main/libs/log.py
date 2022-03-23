@@ -19,7 +19,7 @@ class ServiceLogger:
 
         # Append current date time and log level to the beginning of the log message
         formatter = logging.Formatter(
-            "[%(asctime)s][%(name)s][%(levelname)s] %(message)s"
+            '[%(asctime)s][%(name)s][%(levelname)s] %(message)s'
         )
 
         handler = logging.StreamHandler(stream=sys.stdout)
@@ -50,7 +50,7 @@ class ServiceLogger:
 
     def log(self, level, message, data=None):
         if data:
-            message = f"{message} | {json.dumps(data, default=str)}"
+            message = f'{message} | {json.dumps(data, default=str)}'
 
         if level == logging.CRITICAL:
             self.logger.exception(message)

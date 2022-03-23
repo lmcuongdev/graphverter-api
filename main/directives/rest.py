@@ -2,7 +2,13 @@ from typing import Union
 
 import requests
 from ariadne import SchemaDirectiveVisitor
-from graphql import default_field_resolver, GraphQLField, GraphQLObjectType, GraphQLInterfaceType
+
+from graphql import (
+    GraphQLField,
+    GraphQLInterfaceType,
+    GraphQLObjectType,
+    default_field_resolver,
+)
 
 # Stepzen Rest directive configs:
 #   endpoint(required) -> url
@@ -44,7 +50,7 @@ class RestDirective(SchemaDirectiveVisitor):
     def visit_field_definition(
         self,
         field: GraphQLField,
-        object_type: Union[GraphQLObjectType, GraphQLInterfaceType]
+        object_type: Union[GraphQLObjectType, GraphQLInterfaceType],
     ):
         config = RestDirectiveInputSchema().load(self.args)
         # print('config', config)

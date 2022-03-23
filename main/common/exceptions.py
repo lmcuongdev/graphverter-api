@@ -15,13 +15,13 @@ class StatusCode:
 
 
 class _ErrorMessage:
-    BAD_REQUEST = "Bad request."
-    VALIDATION_ERROR = "Validation error."
-    UNAUTHORIZED = "Unauthorized."
-    FORBIDDEN = "Forbidden."
-    NOT_FOUND = "Not found."
-    METHOD_NOT_ALLOWED = "Method not allowed."
-    INTERNAL_SERVER_ERROR = "Internal server error."
+    BAD_REQUEST = 'Bad request.'
+    VALIDATION_ERROR = 'Validation error.'
+    UNAUTHORIZED = 'Unauthorized.'
+    FORBIDDEN = 'Forbidden.'
+    NOT_FOUND = 'Not found.'
+    METHOD_NOT_ALLOWED = 'Method not allowed.'
+    INTERNAL_SERVER_ERROR = 'Internal server error.'
 
 
 class BaseError(Exception):

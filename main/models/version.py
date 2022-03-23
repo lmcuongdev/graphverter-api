@@ -1,11 +1,9 @@
-from savalidation import validators, ValidationMixin
+from savalidation import ValidationMixin, validators
 from sqlalchemy import Index
 from sqlalchemy.dialects import mysql
 
 from main import db
-from main.enums import (
-    VersionStatus,
-)
+from main.enums import VersionStatus
 from main.libs.log import ServiceLogger
 
 from .base import MetaDataMixin, TimestampMixin

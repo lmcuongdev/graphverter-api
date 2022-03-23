@@ -1,14 +1,20 @@
 from typing import Union
 
 from ariadne import SchemaDirectiveVisitor
-from graphql import default_field_resolver, GraphQLField, GraphQLObjectType, GraphQLInterfaceType
+
+from graphql import (
+    GraphQLField,
+    GraphQLInterfaceType,
+    GraphQLObjectType,
+    default_field_resolver,
+)
 
 
 class AnonymizeDirective(SchemaDirectiveVisitor):
     def visit_field_definition(
         self,
         field: GraphQLField,
-        object_type: Union[GraphQLObjectType, GraphQLInterfaceType]
+        object_type: Union[GraphQLObjectType, GraphQLInterfaceType],
     ):
         anon_type = self.args.get('type')
         original_resolver = field.resolve or default_field_resolver

@@ -4,12 +4,12 @@ from typing import Type
 
 from config.base import BaseConfig
 
-env = os.getenv("ENVIRONMENT", "local")
-config_file = f"config/{env}.py"
+env = os.getenv('ENVIRONMENT', 'local')
+config_file = f'config/{env}.py'
 if not os.path.isfile(config_file):
-    env = "local"
+    env = 'local'
 
-config_name = f"config.{env}"
+config_name = f'config.{env}'
 
 module = import_module(config_name)
 
