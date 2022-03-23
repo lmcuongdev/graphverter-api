@@ -1,6 +1,8 @@
 from flask import Flask, g, request
 from flask_cors import CORS
 
+from main.common.error_handlers import register_error_handlers
+
 
 def _init_app():
     return Flask(__name__)
@@ -13,6 +15,7 @@ def register_subpackages():
 app = _init_app()
 CORS(app)
 register_subpackages()
+register_error_handlers(app)
 
 
 # Handle request events
