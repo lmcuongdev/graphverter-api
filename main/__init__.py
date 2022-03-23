@@ -1,3 +1,5 @@
+from importlib import import_module
+
 from flask import Flask, g, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -14,6 +16,11 @@ def _init_db(app):
 
 
 def register_subpackages():
+    from main import models
+
+    for m in models.__all__:
+        import_module('main.models.' + m)
+
     import main.controllers  # noqa
 
 
