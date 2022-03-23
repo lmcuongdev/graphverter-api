@@ -6,3 +6,5 @@ Flask-Cors==3.0.10
 Flask-SQLAlchemy==2.5.1
 SQLAlchemy==1.4.20
 itsdangerous==2.0.1
+attr==0.3.1
+savalidation==0.4.1

@@ -1,5 +1,6 @@
 from flask import Flask, g, request
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
 
 from main.common.error_handlers import register_error_handlers
 
@@ -8,11 +9,16 @@ def _init_app():
     return Flask(__name__)
 
 
+def _init_db(app):
+    return SQLAlchemy(app)
+
+
 def register_subpackages():
     import main.controllers  # noqa
 
 
 app = _init_app()
+db = _init_db(app)
 CORS(app)
 register_subpackages()
 register_error_handlers(app)
