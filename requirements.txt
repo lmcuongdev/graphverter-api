@@ -8,3 +8,5 @@ SQLAlchemy==1.4.20
 itsdangerous==2.0.1
 attr==0.3.1
 savalidation==0.4.1
+Flask-Migrate==3.1.0
+PyMySQL==1.0.2
