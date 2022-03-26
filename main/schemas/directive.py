@@ -1,5 +1,3 @@
-import json
-
 from marshmallow import fields, post_load, pre_load, validate
 
 from main.schemas.base import BaseSchema
