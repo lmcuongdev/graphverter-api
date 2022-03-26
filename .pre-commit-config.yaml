@@ -20,3 +20,4 @@ repos:
     rev: v4.0.1
     hooks:
       - id: double-quote-string-fixer
+        exclude: ^migrations/
