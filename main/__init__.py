@@ -1,14 +1,17 @@
 from importlib import import_module
 
-from flask import Flask, g, request
+from flask import Flask, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
 from main.common.error_handlers import register_error_handlers
+from main.config import config
 
 
 def _init_app():
-    return Flask(__name__)
+    app = Flask(__name__)
+    app.config.from_object(config)
+    return app
 
 
 def _init_db(app):
