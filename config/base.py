@@ -10,4 +10,4 @@ class BaseConfig:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     JWT_SECRET = 'secret'
-    ACCESS_TOKEN_LIFETIME = 60 * 60 * 24 * 7  # 1 week
+    ACCESS_TOKEN_LIFETIME = 3600 * 24 * 7  # 1 week

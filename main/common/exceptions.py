@@ -23,6 +23,8 @@ class _ErrorMessage:
     METHOD_NOT_ALLOWED = 'Method not allowed.'
     INTERNAL_SERVER_ERROR = 'Internal server error.'
 
+    INVALID_CREDENTIALS = 'Invalid credentials.'
+
 
 class BaseError(Exception):
     def __init__(
@@ -86,3 +88,8 @@ class MethodNotAllowed(BaseError):
 class InternalServerError(BaseError):
     status_code = StatusCode.INTERNAL_SERVER_ERROR
     error_message = _ErrorMessage.INTERNAL_SERVER_ERROR
+
+
+class InvalidCredentials(BaseError):
+    status_code = StatusCode.UNAUTHORIZED
+    error_message = _ErrorMessage.INVALID_CREDENTIALS

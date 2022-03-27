@@ -1,10 +1,10 @@
 from flask import jsonify
-from marshmallow import INCLUDE, Schema, post_dump
+from marshmallow import EXCLUDE, Schema, post_dump
 
 
 class BaseSchema(Schema):
     class Meta:
-        unknown = INCLUDE
+        unknown = EXCLUDE
 
     @post_dump
     def remove_null_fields(self, data, **__):
