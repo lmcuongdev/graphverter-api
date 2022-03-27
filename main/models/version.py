@@ -30,3 +30,6 @@ class VersionModel(db.Model, TimestampMixin, MetaDataMixin, ValidationMixin):
 
     validators.validates_constraints()
     validators.validates_one_of('status', VersionStatus.get_list())
+
+    def __init__(self, *args, **kwargs):
+        super(VersionModel, self).__init__(*args, **kwargs)

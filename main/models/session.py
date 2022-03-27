@@ -2,7 +2,7 @@ from main import db
 from main.models.base import MetaDataMixin, TimestampMixin
 
 
-class Session(db.Model, TimestampMixin, MetaDataMixin):
+class SessionModel(db.Model, TimestampMixin, MetaDataMixin):
     __tablename__ = 'session'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -13,3 +13,6 @@ class Session(db.Model, TimestampMixin, MetaDataMixin):
     )
 
     project = db.relationship('ProjectModel', foreign_keys=[project_id])
+
+    def __init__(self, *args, **kwargs):
+        super(SessionModel, self).__init__(*args, **kwargs)
