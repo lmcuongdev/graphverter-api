@@ -24,6 +24,8 @@ class _ErrorMessage:
     INTERNAL_SERVER_ERROR = 'Internal server error.'
 
     INVALID_CREDENTIALS = 'Invalid credentials.'
+    INVALID_AUTHORIZATION_HEADER = 'Invalid authorization header.'
+    INVALID_ACCESS_TOKEN = 'Invalid access token.'
 
 
 class BaseError(Exception):
@@ -90,6 +92,13 @@ class InternalServerError(BaseError):
     error_message = _ErrorMessage.INTERNAL_SERVER_ERROR
 
 
-class InvalidCredentials(BaseError):
-    status_code = StatusCode.UNAUTHORIZED
+class InvalidCredentials(Unauthorized):
     error_message = _ErrorMessage.INVALID_CREDENTIALS
+
+
+class InvalidAuthorizationHeader(Unauthorized):
+    error_message = _ErrorMessage.INVALID_AUTHORIZATION_HEADER
+
+
+class InvalidAccessToken(Unauthorized):
+    error_message = _ErrorMessage.INVALID_ACCESS_TOKEN

@@ -1,11 +1,22 @@
 from datetime import datetime, timedelta
+from typing import Optional
 
 import jwt
+from flask import request
 from flask_bcrypt import check_password_hash
+from jwt import PyJWTError
 
 from main import config
-from main.common.exceptions import BadRequest, InvalidCredentials
+from main.common.exceptions import (
+    BadRequest,
+    InvalidAccessToken,
+    InvalidAuthorizationHeader,
+    InvalidCredentials,
+)
+from main.libs.log import ServiceLogger
 from main.models.user import UserModel
+
+logger = ServiceLogger(__name__)
 
 
 def validate_username(username: str):
@@ -38,5 +49,36 @@ def get_login_user(username: str, password: str) -> UserModel:
 
     if not check_password_hash(user.password, password):
         raise InvalidCredentials()
+
+    return user
+
+
+def parse_access_token() -> str:
+    # Parse authorization header and get access token from the format: Bearer <access_token>
+    authorization = None
+
+    if 'Authorization' in request.headers:
+        authorization = request.headers['Authorization']
+
+    if not authorization:
+        raise InvalidAuthorizationHeader()
+
+    if not authorization.startswith('Bearer '):
+        raise InvalidAccessToken()
+    # Parse access token from the authorization header
+    return authorization[len('Bearer ') :].lstrip()
+
+
+def get_user(access_token: str) -> Optional[UserModel]:
+    try:
+        payload = jwt.decode(access_token, config.JWT_SECRET, algorithms='HS256')
+        user_id = payload['iss']
+    except PyJWTError as e:
+        logger.info(message=str(e))
+        raise InvalidAccessToken()
+
+    user = UserModel.query.get(user_id)
+    if not user:
+        raise InvalidAccessToken()
 
     return user
