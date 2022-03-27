@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 import jwt
-from werkzeug.security import check_password_hash
+from flask_bcrypt import check_password_hash
 
 from main import config
 from main.common.exceptions import BadRequest, InvalidCredentials
