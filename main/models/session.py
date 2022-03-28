@@ -12,7 +12,9 @@ class SessionModel(db.Model, TimestampMixin, MetaDataMixin):
         nullable=False,
     )
 
-    project = db.relationship('ProjectModel', foreign_keys=[project_id])
+    project = db.relationship(
+        'ProjectModel', foreign_keys=[project_id], back_populates='session'
+    )
 
     def __init__(self, *args, **kwargs):
         super(SessionModel, self).__init__(*args, **kwargs)
