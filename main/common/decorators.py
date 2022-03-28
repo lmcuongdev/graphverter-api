@@ -4,8 +4,9 @@ from flask import request
 from marshmallow import Schema
 from marshmallow import ValidationError as SchemaValidationError
 
-from main.common.exceptions import ValidationError
+from main.common.exceptions import Forbidden, NotFound, ValidationError
 from main.engines.auth import get_user, parse_access_token
+from main.engines.project import get_project
 
 
 def validate_input(schema: Schema):
@@ -40,6 +41,24 @@ def user_authenticated(fn):
         # Get the authenticated user from database
         # Then pass it to the function being decorated
         kwargs['user'] = get_user(token)
+        return fn(*args, **kwargs)
+
+    return decorator
+
+
+def validate_project(fn):
+    @wraps(fn)
+    def decorator(*args, **kwargs):
+        project = get_project(project_id=kwargs['project_id'])
+        user = kwargs['user']
+
+        if project is None:
+            raise NotFound()
+
+        if project.user_id != user.id:
+            raise Forbidden(error_message='You are not allowed to view this project.')
+
+        kwargs['project'] = project
         return fn(*args, **kwargs)
 
     return decorator

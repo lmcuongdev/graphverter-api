@@ -11,3 +11,5 @@ class BaseConfig:
 
     JWT_SECRET = 'secret'
     ACCESS_TOKEN_LIFETIME = 3600 * 24 * 7  # 1 week
+
+    DEFAULT_ITEMS_PER_PAGE = 10

@@ -1,5 +1,5 @@
 from flask import jsonify
-from marshmallow import EXCLUDE, Schema, post_dump
+from marshmallow import EXCLUDE, Schema, fields, post_dump
 
 
 class BaseSchema(Schema):
@@ -12,3 +12,9 @@ class BaseSchema(Schema):
 
     def jsonify(self, obj, many=False):
         return jsonify(self.dump(obj, many=many))
+
+
+class PaginationSchema(BaseSchema):
+    items_per_page = fields.Integer()
+    page = fields.Integer()
+    total_items = fields.Integer()
