@@ -28,3 +28,7 @@ class VersionModel(db.Model, TimestampMixin, MetaDataMixin):
 
     def __init__(self, *args, **kwargs):
         super(VersionModel, self).__init__(*args, **kwargs)
+
+    @property
+    def schema_text(self, *_, **__) -> str:
+        return self.meta_data['schema_text']
