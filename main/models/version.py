@@ -1,9 +1,7 @@
-from savalidation import ValidationMixin, validators
 from sqlalchemy import Index
 from sqlalchemy.dialects import mysql
 
 from main import db
-from main.enums import VersionStatus
 from main.libs.log import ServiceLogger
 
 from .base import MetaDataMixin, TimestampMixin
@@ -11,7 +9,7 @@ from .base import MetaDataMixin, TimestampMixin
 logger = ServiceLogger(__name__)
 
 
-class VersionModel(db.Model, TimestampMixin, MetaDataMixin, ValidationMixin):
+class VersionModel(db.Model, TimestampMixin, MetaDataMixin):
     __tablename__ = 'version'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -27,9 +25,6 @@ class VersionModel(db.Model, TimestampMixin, MetaDataMixin, ValidationMixin):
     project = db.relationship('ProjectModel', foreign_keys=[project_id])
 
     Index('idx_version_project', project_id)
-
-    validators.validates_constraints()
-    validators.validates_one_of('status', VersionStatus.get_list())
 
     def __init__(self, *args, **kwargs):
         super(VersionModel, self).__init__(*args, **kwargs)
