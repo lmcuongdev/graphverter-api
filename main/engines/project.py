@@ -2,11 +2,21 @@ from typing import Optional
 
 from main import config, db
 from main.engines.session import create_session
+from main.engines.version import (
+    create_version,
+    get_latest_version,
+    update_latest_version,
+)
+from main.enums import VersionStatus
+from main.libs.log import ServiceLogger
 from main.models.project import ProjectModel
+from main.models.version import VersionModel
+
+logger = ServiceLogger(__name__)
 
 
 def get_project(
-    project_id: Optional[str] = None, api_path: Optional[str] = None
+    project_id: Optional[int] = None, api_path: Optional[str] = None
 ) -> Optional[ProjectModel]:
     if project_id is None and api_path is None:
         return None
@@ -54,3 +64,42 @@ def get_projects(filters: dict) -> dict:
         'items_per_page': items_per_page,
         'items': projects,
     }
+
+
+def deploy_project(project_id: int) -> VersionModel:
+    """Deploy the project and return newly created version"""
+    logger.info(message='Start deploying project', data={'project_id': project_id})
+
+    project = get_project(project_id)
+    session = project.session
+    # TODO: Validate schema text
+
+    current_version = get_latest_version(project_id=project_id)
+    if current_version and not current_version.is_dirty:
+        logger.info(
+            message='Deployed successfully',
+            data={'project_id': project_id, 'version_id': current_version.id},
+        )
+        return current_version
+    # Deactivate current version before creating new active version
+    update_latest_version(
+        project_id=project_id,
+        status=VersionStatus.INACTIVE,
+    )
+
+    version = create_version(
+        project_id=project_id,
+        status=VersionStatus.ACTIVE,
+        is_dirty=False,
+        version_data={
+            'schema_text': session.meta_data['schema_text'],
+            'api_path': project.api_path,
+        },
+    )
+    db.session.commit()
+    logger.info(
+        message='Deployed successfully',
+        data={'project_id': project_id, 'version_id': version.id},
+    )
+
+    return version
