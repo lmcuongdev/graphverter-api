@@ -69,7 +69,7 @@ def validate_session(fn):
     @wraps(fn)
     def decorator(*args, **kwargs):
         project = kwargs['project']
-        session = get_session(project.id)
+        session = get_session(kwargs['session_id'])
 
         if session is None or session.project_id != project.id:
             raise NotFound(
