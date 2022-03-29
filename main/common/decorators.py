@@ -16,7 +16,7 @@ def validate_input(schema: Schema):
     def decorator(fn):
         @wraps(fn)
         def wrapper(*args, **kwargs):
-            request_data = request.get_json() or {}
+            request_data = request.get_json(silent=True) or {}
             if request.method == 'GET':
                 request_data = request.args.to_dict()
 
