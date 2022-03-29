@@ -1,6 +1,5 @@
 from marshmallow import fields, pre_load
 
-from main.engines.utils import trim_data
 from main.schemas.base import BaseSchema
 
 
@@ -14,4 +13,6 @@ class UpdateSessionSchema(BaseSchema):
 
     @pre_load
     def remove_whitespaces(self, data, **__):
-        return trim_data(data)
+        if 'schema_text' in data:
+            data['schema_text'] = data['schema_text'].strip()
+        return data
