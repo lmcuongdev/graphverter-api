@@ -7,3 +7,11 @@ class EnumBase:
 class VersionStatus(EnumBase):
     ACTIVE = 'active'
     INACTIVE = 'inactive'
+
+
+class RestMethod(EnumBase):
+    GET = 'get'
+    POST = 'post'
+    PUT = 'put'
+    DELETE = 'delete'
+    PATCH = 'patch'

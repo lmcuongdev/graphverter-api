@@ -1,5 +1,6 @@
 from marshmallow import fields, post_load, pre_load, validate
 
+from main.enums import RestMethod
 from main.schemas.base import BaseSchema
 
 
@@ -13,8 +14,8 @@ class RestDirectiveInputSchema(BaseSchema):
     url = fields.String(required=True)
     method = fields.String(
         required=False,
-        validate=validate.OneOf(['get', 'post', 'put', 'delete', 'patch']),
-        load_default='get',
+        validate=validate.OneOf(RestMethod.get_list()),
+        load_default=RestMethod.GET,
     )
     headers = fields.Nested(NameValuePairSchema, required=False, many=True)
     params = fields.Nested(NameValuePairSchema, required=False, many=True)
