@@ -16,3 +16,12 @@ def get_session(project_id: int) -> SessionModel:
         .order_by(desc(SessionModel.id))
         .first()
     )
+
+
+def update_session(session: SessionModel, schema_text: str):
+    # TODO: Validate schema text
+    meta_data = session.meta_data
+    meta_data['schema_text'] = schema_text
+    session.meta_data = meta_data
+
+    db.session.commit()

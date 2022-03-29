@@ -7,6 +7,7 @@ from marshmallow import ValidationError as SchemaValidationError
 from main.common.exceptions import Forbidden, NotFound, ValidationError
 from main.engines.auth import get_user, parse_access_token
 from main.engines.project import get_project
+from main.engines.session import get_session
 
 
 def validate_input(schema: Schema):
@@ -59,6 +60,23 @@ def validate_project(fn):
             raise Forbidden(error_message='You are not allowed to view this project.')
 
         kwargs['project'] = project
+        return fn(*args, **kwargs)
+
+    return decorator
+
+
+def validate_session(fn):
+    @wraps(fn)
+    def decorator(*args, **kwargs):
+        project = kwargs['project']
+        session = get_session(project.id)
+
+        if session is None or session.project_id != project.id:
+            raise NotFound(
+                error_message=f"Session id {kwargs['session_id']} not found for the project id {project.id}"
+            )
+
+        kwargs['session'] = session
         return fn(*args, **kwargs)
 
     return decorator
