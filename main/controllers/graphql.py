@@ -7,6 +7,9 @@ from main.directives.anonymize import AnonymizeDirective
 from main.directives.rest import RestDirective
 from main.engines.project import get_project
 from main.engines.version import get_latest_version
+from main.libs.log import ServiceLogger
+
+logger = ServiceLogger(__name__)
 
 
 @app.route('/graphql', methods=['GET'])
@@ -17,6 +20,11 @@ def get_graphql_playground(*_, **__):
 @app.route('/<api_path>/graphql', methods=['POST'])
 def execute_graphql(api_path: str, **__):
     request_query = request.get_json()
+    if request_query.get('operationName') != 'IntrospectionQuery':
+        # If this is not an introspection query,
+        # TODO: send event or do some analytics work here
+        logger.info(message='Got query', data=request_query)
+
     # TODO: Load from cache, api_path->schema_text
     project = get_project(api_path=api_path)
     # if not project or not project.is_deployed:
