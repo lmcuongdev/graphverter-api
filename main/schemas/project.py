@@ -31,6 +31,7 @@ class ProjectBaseSchema(BaseSchema):
     name = fields.String()
     api_path = fields.String()
     is_deployed = fields.Boolean()
+    updated = fields.DateTime()
 
 
 class ProjectsSchema(PaginationSchema):
