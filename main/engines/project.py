@@ -49,9 +49,9 @@ def get_projects(filters: dict) -> dict:
     query_filters = []
 
     # Filter by user ids if it's set
-    user_ids = filters.get('organization_ids')
+    user_ids = filters.get('user_ids')
     if user_ids:
-        query_filters.append(ProjectModel.organization_id.in_(user_ids))
+        query_filters.append(ProjectModel.user_id.in_(user_ids))
 
     # Build pagination
     query = query.filter(*query_filters)
