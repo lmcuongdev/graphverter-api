@@ -15,7 +15,7 @@ from main.schemas.session import SessionSchema, UpdateSessionSchema
 @validate_session
 @validate_input(UpdateSessionSchema())
 def update_schema_text(args, session, *_, **__):
-    update_session(session, schema_text=args['schema_text'])
+    update_session(session, **args)
     return SessionSchema().jsonify(session)
 
 
