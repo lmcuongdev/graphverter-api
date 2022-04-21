@@ -1,12 +1,11 @@
-from ariadne import gql, graphql_sync, make_executable_schema
+from ariadne import graphql_sync, make_executable_schema
 from ariadne.constants import PLAYGROUND_HTML
 from flask import jsonify, request
 
 from main import app
 from main.directives.anonymize import AnonymizeDirective
 from main.directives.rest import RestDirective
-from main.engines.project import get_project
-from main.engines.version import get_latest_version
+from main.engines.project import get_schema_text
 from main.libs.log import ServiceLogger
 
 logger = ServiceLogger(__name__)
@@ -25,15 +24,10 @@ def execute_graphql(api_path: str, **__):
         # TODO: send event or do some analytics work here
         logger.info(message='Got query', data=request_query)
 
-    # TODO: Load from cache, api_path->schema_text
-    project = get_project(api_path=api_path)
-    # if not project or not project.is_deployed:
-    #     raise NotFound(error_message='No published project for this path found.')
-    version = get_latest_version(project_id=project.id)
-
-    type_defs = gql(version.schema_text)
+    # Assume the schema_text is valid because validation on this should be done in config time, not runtime
+    schema_text = get_schema_text(api_path)
     schema = make_executable_schema(
-        type_defs,
+        type_defs=schema_text,
         directives={'anonymize': AnonymizeDirective, 'rest': RestDirective},
     )
 

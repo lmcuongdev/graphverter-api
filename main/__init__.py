@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from main.common.error_handlers import register_error_handlers
 from main.config import config
+from main.libs.memcache_client import MemcacheClient
 
 
 def _init_app():
@@ -16,6 +17,13 @@ def _init_app():
 
 def _init_db(app):
     return SQLAlchemy(app)
+
+
+def _init_memcache():
+    return MemcacheClient(
+        config.MEMCACHED_SERVERS,
+        prefix_key=config.MEMCACHED_KEY_PREFIX,
+    )
 
 
 def register_subpackages():
@@ -29,6 +37,7 @@ def register_subpackages():
 
 app = _init_app()
 db = _init_db(app)
+memcache_client = _init_memcache()
 CORS(app)
 register_subpackages()
 register_error_handlers(app)

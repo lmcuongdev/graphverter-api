@@ -1,6 +1,6 @@
 from typing import Optional
 
-from main import config, db
+from main import config, db, memcache_client
 from main.engines.session import create_session
 from main.engines.version import (
     create_version,
@@ -103,3 +103,18 @@ def deploy_project(project_id: int) -> VersionModel:
     )
 
     return version
+
+
+def get_schema_text(api_path: str):
+    cached_schema = memcache_client.get(api_path)
+    if cached_schema:
+        return cached_schema
+
+    project = get_project(api_path=api_path)
+    # if not project or not project.is_deployed:
+    #     raise NotFound(error_message='No published project for this path found.')
+    version = get_latest_version(project_id=project.id)
+    schema_text = version.schema_text
+
+    memcache_client.set(key=api_path, val=schema_text, time=60 ** 2)
+    return schema_text
