@@ -1,4 +1,11 @@
-from marshmallow import fields, post_load, pre_load, validate
+from marshmallow import (
+    ValidationError,
+    fields,
+    post_load,
+    pre_load,
+    validate,
+    validates_schema,
+)
 
 from main.enums import RestMethod
 from main.libs.misc import parse_path
@@ -67,3 +74,23 @@ class RestDirectiveInputSchema(BaseSchema):
             setter['path'] = parse_path(setter['path'])
 
         return data
+
+
+class ArgumentInputSchema(BaseSchema):
+    name = fields.String(required=True)
+    field = fields.String(required=False)
+    argument = fields.String(required=False)
+
+    @validates_schema
+    def validate_schema(self, data, *_, **__):
+        if 'field' in data and 'argument' in data:
+            raise ValidationError(
+                message='Must provide only one of the two field `field` or `argument`.'
+            )
+        if 'field' not in data and 'argument' not in data:
+            raise ValidationError(message='Missing field `field` or `argument`.')
+
+
+class CombineDirectiveInputSchema(BaseSchema):
+    query = fields.String(required=True)
+    arguments = fields.Nested(ArgumentInputSchema, many=True, required=False)

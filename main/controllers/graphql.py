@@ -4,6 +4,7 @@ from flask import jsonify, request
 
 from main import app
 from main.directives.anonymize import AnonymizeDirective
+from main.directives.combine import CombineDirective
 from main.directives.rest import RestDirective
 from main.engines.project import get_schema_text
 from main.libs.log import ServiceLogger
@@ -28,11 +29,18 @@ def execute_graphql(api_path: str, **__):
     schema_text = get_schema_text(api_path)
     schema = make_executable_schema(
         type_defs=schema_text,
-        directives={'anonymize': AnonymizeDirective, 'rest': RestDirective},
+        directives={
+            'anonymize': AnonymizeDirective,
+            'rest': RestDirective,
+            'combine': CombineDirective,
+        },
     )
 
     success, result = graphql_sync(
-        schema, request_query, context_value=request, debug=app.debug
+        schema,
+        request_query,
+        context_value={'schema': schema, 'request': request},
+        debug=app.debug,
     )
 
     status_code = 200 if success else 400
