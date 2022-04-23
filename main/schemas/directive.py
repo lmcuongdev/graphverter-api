@@ -1,6 +1,7 @@
 from marshmallow import fields, post_load, pre_load, validate
 
 from main.enums import RestMethod
+from main.libs.misc import parse_path
 from main.schemas.base import BaseSchema
 
 SPACE_NOT_ALLOWED_ERROR = 'String must not contains any space.'
@@ -58,11 +59,11 @@ class RestDirectiveInputSchema(BaseSchema):
                 data[field] = {pair['name']: pair['value'] for pair in data[field]}
 
         if data.get('resultRoot') is not None:
-            data['result_root'] = data['resultRoot'].split('.')
+            data['result_root'] = parse_path(data['resultRoot'])
         else:
             data['result_root'] = []
 
         for setter in data.get('setters', []):
-            setter['path'] = setter['path'].split('.')
+            setter['path'] = parse_path(setter['path'])
 
         return data

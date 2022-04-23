@@ -1,3 +1,4 @@
+import re
 from typing import Dict, List, Union
 
 import requests
@@ -43,7 +44,13 @@ def _get_resolved_config(config: dict, variables: dict):
 
 def get_nested_data(data: Union[Dict, List], path: List[str]):
     """Get nested data from path list"""
+    regex = r'^\[\d+\]$'
     for key in path:
+        if re.match(regex, key):
+            # Take the index of the list if key is like "[0]", "[1]",...
+            index = int(key[1:-1])
+            data = data[index]
+            continue
         if isinstance(data, list):
             # For each instance, get the specified key
             # In case the instance is list, convert the key to get the index

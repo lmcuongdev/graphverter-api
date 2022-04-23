@@ -1,4 +1,5 @@
 import json
+import re
 from contextlib import suppress
 from typing import Callable, Optional, TypeVar
 
@@ -24,3 +25,22 @@ def safe_load_json(
         return default_factory()
 
     return None
+
+
+def parse_path(path: str):
+    """
+    'data[0].items' => ['data', '[0]', 'items']
+    'data.item.key' => ['data', 'item', 'key']
+    """
+    regex = r'\[\d+\]$'
+    result = []
+    for item in path.split('.'):
+        matches = re.finditer(regex, item)
+        try:
+            match = next(matches)
+            match_index = match.start()
+            result.extend((item[:match_index], item[match_index:]))
+        except StopIteration:
+            # If this is not something like items[1]
+            result.append(item)
+    return result
