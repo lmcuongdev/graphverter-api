@@ -1,14 +1,9 @@
-from typing import Union
+from typing import Dict, List, Union
 
 import requests
 from ariadne import SchemaDirectiveVisitor
 
-from graphql import (
-    GraphQLField,
-    GraphQLInterfaceType,
-    GraphQLObjectType,
-    default_field_resolver,
-)
+from graphql import GraphQLField, GraphQLInterfaceType, GraphQLObjectType
 
 # Stepzen Rest directive configs:
 #   endpoint(required) -> url
@@ -46,6 +41,21 @@ def _get_resolved_config(config: dict, variables: dict):
     return config
 
 
+def get_nested_data(data: Union[Dict, List], path: List[str]):
+    """Get nested data from path list"""
+    for key in path:
+        if isinstance(data, list):
+            # For each instance, get the specified key
+            # In case the instance is list, convert the key to get the index
+            data = list(
+                map(lambda _: _.get(key) if isinstance(_, dict) else _[int(key)], data)
+            )
+            continue
+        # Assume type is dict
+        data = data[key]
+    return data
+
+
 class RestDirective(SchemaDirectiveVisitor):
     def visit_field_definition(
         self,
@@ -54,8 +64,6 @@ class RestDirective(SchemaDirectiveVisitor):
     ):
         config = RestDirectiveInputSchema().load(self.args)
         # print('config', config)
-
-        original_resolver = field.resolve or default_field_resolver
 
         def resolve_rest(obj, info, **kwargs):
             if kwargs.get('_payload'):
@@ -70,9 +78,30 @@ class RestDirective(SchemaDirectiveVisitor):
                 json=resolved_config.get('payload'),
                 headers=resolved_config.get('headers'),
             )
-            # print(params, headers)
-            # print('response', response.json())
-            return response.json()
+
+            # Get nested data from `result_root` option and use it as result
+            result = get_nested_data(
+                data=response.json(),
+                path=resolved_config['result_root'],
+            )
+
+            # Resolve `setters` if it's set
+            if resolved_config['setters']:
+                if isinstance(result, list):
+                    # Iterate each item and set the setters
+                    for item in result:
+                        for setter in resolved_config['setters']:
+                            item[setter['field']] = get_nested_data(
+                                item, path=setter['path']
+                            )
+                else:
+                    # Assume this is dict, set the setters directly
+                    for setter in resolved_config['setters']:
+                        result[setter['field']] = get_nested_data(
+                            result, path=setter['path']
+                        )
+
+            return result
 
         field.resolve = resolve_rest
         return field
