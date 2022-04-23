@@ -97,6 +97,9 @@ def deploy_project(project_id: int) -> VersionModel:
         },
     )
     db.session.commit()
+
+    # Delete the cache because it's outdated
+    memcache_client.delete(key=project.api_path)
     logger.info(
         message='Deployed successfully',
         data={'project_id': project_id, 'version_id': version.id},
