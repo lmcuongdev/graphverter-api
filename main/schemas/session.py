@@ -4,6 +4,7 @@ from main.schemas.base import BaseSchema
 
 
 class EndpointSchema(BaseSchema):
+    query_name = fields.String()
     url = fields.String()
     method = fields.String()
     payload_json = fields.String()
