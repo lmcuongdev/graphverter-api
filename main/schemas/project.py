@@ -40,3 +40,9 @@ class ProjectsSchema(PaginationSchema):
 
 class ProjectDetailSchema(ProjectBaseSchema):
     session = fields.Nested(SessionSchema)
+
+
+class UpdateProjectSchema(BaseSchema):
+    name = fields.String(default=None)
+    api_path = fields.String(default=None)
+    is_deployed = fields.Boolean(default=None)

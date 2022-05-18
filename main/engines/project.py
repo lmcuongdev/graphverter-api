@@ -1,6 +1,7 @@
 from typing import Optional
 
 from main import config, db, memcache_client
+from main.common.exceptions import NotFound
 from main.engines.session import create_session
 from main.engines.version import (
     create_version,
@@ -35,7 +36,32 @@ def create_project(user_id: int, name: str, api_path: str, **__) -> ProjectModel
 
 def init_project(project_id: int):
     create_session(project_id, meta_data={})
+
+    project = ProjectModel.query.get(project_id)
+    create_version(project_id, {'schema_text': '', 'api_path': project.api_path})
     db.session.commit()
+
+
+def update_project(
+    project: ProjectModel,
+    name: Optional[str] = None,
+    api_path: Optional[str] = None,
+    is_deployed: Optional[bool] = None,
+    **__,
+):
+    old_api_path = project.api_path
+    if name is not None:
+        project.name = name
+    if api_path is not None:
+        project.api_path = api_path
+    if is_deployed is not None:
+        project.is_deployed = is_deployed
+
+    # Delete the cache when is_deployed change
+    memcache_client.delete(key=old_api_path)
+
+    db.session.commit()
+    return project
 
 
 def get_projects(filters: dict) -> dict:
@@ -114,8 +140,9 @@ def get_schema_text(api_path: str):
         return cached_schema
 
     project = get_project(api_path=api_path)
-    # if not project or not project.is_deployed:
-    #     raise NotFound(error_message='No published project for this path found.')
+    if not project or not project.is_deployed:
+        raise NotFound(error_message='No published project for this endpoint found.')
+
     version = get_latest_version(project_id=project.id)
     schema_text = version.schema_text
 

@@ -9,6 +9,7 @@ from main.schemas.project import (
     CreateProjectSchema,
     ProjectDetailSchema,
     ProjectsSchema,
+    UpdateProjectSchema,
 )
 
 
@@ -42,4 +43,15 @@ def get_projects(args, user, **__):
 @user_authenticated
 @validate_project
 def get_project(project, **__):
+    return ProjectDetailSchema().jsonify(project)
+
+
+@app.route('/projects/<int:project_id>', methods=['PUT'])
+@user_authenticated
+@validate_project
+@validate_input(UpdateProjectSchema())
+def update_project(args, project, **__):
+    if 'api_path' in args and project_engine.get_project(api_path=args['api_path']):
+        raise BadRequest(error_message='API path is already taken.')
+    project = project_engine.update_project(project, **args)
     return ProjectDetailSchema().jsonify(project)
